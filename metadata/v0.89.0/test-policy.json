@@ -1,0 +1,8 @@
+{
+  "format": "revealline-release-test-policy.v1",
+  "mode": "waived",
+  "authorization": "explicit-user-request-20260922",
+  "scope": "automated-test-suites",
+  "reason": "Temporarily prioritize release publication at explicit user request; automated test suites are not run.",
+  "restoration": "Restore mode to required in a reviewed PR. Build, source identity, validation, lint, formatting, production provenance, immutable asset and publication verification guards remain mandatory."
+}

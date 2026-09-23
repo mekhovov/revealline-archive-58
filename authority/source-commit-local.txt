@@ -1,0 +1,26 @@
+tree d4338abbf5c65809af38a398cedf0d9fcae86b7f
+parent 82f1632c4be441ba212fccc7a3cd336911cba246
+parent 33614bc806db2397096851bb0af5a3d6ab90892f
+author Oleksandr Mekhovov <oleksandr.mekhovov@coupa.com> 1790129777 +0200
+committer GitHub <noreply@github.com> 1790129777 +0200
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ wsFcBAABCAAQBQJqszZxCRC1aQ7uu5UhlAAA3coQABDv/AF7cP2flYxWbwUUgCIN
+ D8ckPHeAmDQmbcTmRnRjs9ug12egdauHPYd98CurLG3ynkyHKMVLP9Zrewq6mwmD
+ 0rbDwkoCOpc+9l090IGO31p+0sQUZWYG7y+oZ9MW2gsK1VbRaZi/TvCyyCLmSxw5
+ gi0/gxJwORSoOGWEmQhbOaQdsVrabGq4vb7H0hfFy9QoluqvuuBm4sq/UBjPP6jD
+ Nimk57z2B7PtMDJq00AgA0CmiCMCN6sjRQ3dt/7tuGYmB2K9w/eFi2fX4yWClZYm
+ ZmGlCng648Rsx+CYJNo9iny7NJ+q9B8IXmo99KNE37GJgtwhIzcpUK76In9pIew4
+ OoFaj9zrPuF1jIJ80JPAhVLkR4sRdW20y1/lIndgaZ4aasK/MCrXjh3uTSDq66mu
+ Fws1Ggng4A1EwDqPWjYyiw8sV8FI1HPWp423Mt6te6/0vba1qG/qpf113ofWI+Z5
+ NAqIJeSEpmVcFljTcbryqfms9MpQc/KsRop1oumknErSDf/DcYY7GpiHeSw5uHQW
+ xVW3uiFAiYDiebIUy44ZbXoRDf47m5OjG0k+IClVe5SETSGmL5NoZ5MbI/fgtKQi
+ 3TkO2fpZQflqOGS5Edv8dvdFJbs34YcQkXFusLMkaIiWXtRzUlZU4mJYS4xaVDo/
+ 7WV2f5NpdZDZFzVFRbRq
+ =tezN
+ -----END PGP SIGNATURE-----
+ 
+
+Merge pull request #285 from mekhovov/codex/varied-enemy-trajectories
+
+v0.89.0: varied field-enemy courses without changing movement domains
