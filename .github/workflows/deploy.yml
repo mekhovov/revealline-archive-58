@@ -1,92 +1,75 @@
-name: Publish immutable RevealLine archive 58
+name: Read-only RevealLine Archive58 public byte audit
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
-      run_tests:
-        description: Run optional infrastructure tests (temporary user waiver)
-        type: boolean
-        required: false
-        default: false
+      expected_audit_head:
+        description: Independently reviewed exact audit-only commit
+        required: true
+        type: string
+      execution_request_sha256:
+        description: Independently reviewed SHA-256 of the committed actual production request
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
-  group: archive-58-pages
+  group: archive58-read-only-public-audit
   cancel-in-progress: false
 jobs:
-  build:
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+  audit-public-bytes:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/audit-archive58-http'
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
-      - name: Check out reviewed archive infrastructure
+      - name: Check out the exact audit workflow commit without persisted credentials
         uses: actions/checkout@v4
         with:
-          path: archive
+          ref: ${{ github.sha }}
+          path: audit-runner
           persist-credentials: false
-      - name: Check out the reviewed bounded original-ZIP extractor
-        uses: actions/checkout@v4
-        with:
-          repository: mekhovov/revealline
-          ref: 30530b3436a1a9737be93f67f308587f89b2f8bc
-          fetch-depth: 1
-          path: source
-          persist-credentials: false
-          sparse-checkout: |
-            publishing/pages-controller/extract-current.py
-            publishing/pages-controller/test_extract_current.py
-          sparse-checkout-cone-mode: false
-      - name: Fetch the original immutable release tags for identity verification
-        working-directory: source
-        run: git fetch --depth=1 origin refs/tags/v0.89.0:refs/tags/v0.89.0
-      - name: Require artifact workspace capacity
+      - name: Require the independently reviewed actual production request
+        id: binding
+        env:
+          EXPECTED_REQUEST_SHA256: ${{ inputs.execution_request_sha256 }}
+          EXPECTED_AUDIT_HEAD: ${{ inputs.expected_audit_head }}
         run: |
-          python3 - <<'PY'
-          import shutil
-          free = shutil.disk_usage('.').free
-          assert free >= 3 * 1024**3, f'At least 3 GiB free required; found {free}'
+          python3 -B - <<'PY'
+          import hashlib, json, os, re, subprocess
+          from pathlib import Path
+          head = os.environ['EXPECTED_AUDIT_HEAD']
+          assert re.fullmatch('[a-f0-9]{40}', head)
+          assert os.environ['GITHUB_SHA'] == head
+          assert subprocess.check_output(['git', '-C', 'audit-runner', 'rev-parse', 'HEAD'], text=True).strip() == head
+          target = Path('audit-runner/audit/execution-request.reviewed.json')
+          assert target.is_file() and not target.is_symlink()
+          assert target.stat().st_size <= 32768
+          raw = target.read_bytes()
+          expected = os.environ['EXPECTED_REQUEST_SHA256']
+          assert re.fullmatch('[a-f0-9]{64}', expected)
+          assert hashlib.sha256(raw).hexdigest() == expected
+          value = json.loads(raw)
+          assert value['format'] == 'revealline-archive58-http-request.v1'
+          assert value['reviewed'] is True
+          assert value['archiveTree'] == 'be7851a079bf66b1014731973c7a566113570776'
+          commit = value['archiveCommit']
+          assert re.fullmatch('[a-f0-9]{40}', commit)
+          assert value['sourceCheckoutCommit'] == commit
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('archive_commit=' + commit + '\n')
           PY
-      - name: Check extractor corruption guards and exact artifact inventory rules
-        if: github.event_name == 'workflow_dispatch' && inputs.run_tests == true
-        run: |
-          python3 -m unittest discover -s source/publishing/pages-controller -p 'test_extract_current.py' -v
-          python3 -m unittest discover -s archive/tools -p 'test_*.py' -v
-      - name: Record temporary automated-suite waiver
-        if: github.event_name != 'workflow_dispatch' || inputs.run_tests != true
-        run: echo 'Automated suites waived by explicit user request 2026-09-22; not a test pass. Extraction, source identity, inventory and capacity verification remain mandatory.'
-      - name: Extract the original ZIP and verify every member
-        run: python3 archive/tools/prepare.py --source source --out "$RUNNER_TEMP/archive58"
-      - name: Independently reread every artifact byte including hidden files
-        run: python3 archive/tools/verify.py "$RUNNER_TEMP/archive58/artifact"
-      - name: Retain extraction and complete-inventory receipts
+      - name: Check out only the exact actual deployed archive commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.binding.outputs.archive_commit }}
+          path: audit-runner/audit/repository
+          persist-credentials: false
+      - name: Validate original production evidence and audit every expected HTTP body
+        run: python3 -B audit-runner/audit/http-tools/http_audit.py --run
+      - name: Retain every attempt, including failures, without public payload files
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: archive58-verification-receipts
-          if-no-files-found: warn
-          path: |
-            ${{ runner.temp }}/archive58/zip-receipt-*.json
-            ${{ runner.temp }}/archive58/receipt.json
-            ${{ runner.temp }}/archive58/expected-inventory.json
-      - name: Upload complete canonical site
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: ${{ runner.temp }}/archive58/artifact
-          include-hidden-files: true
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy archive 58 in its own repository
-        id: deployment
-        uses: actions/deploy-pages@v4
+          name: archive58-public-http-evidence
+          if-no-files-found: error
+          path: audit-runner/audit/http/
+

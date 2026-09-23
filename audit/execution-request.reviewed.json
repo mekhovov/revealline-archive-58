@@ -1,0 +1,48 @@
+{
+  "archiveCommit": "9ada3176b5e892af72f61c14920f0612da8b1b72",
+  "archiveTree": "be7851a079bf66b1014731973c7a566113570776",
+  "deploymentId": 6605793108,
+  "deploymentStatusId": 18709234324,
+  "format": "revealline-archive58-http-request.v1",
+  "pins": {
+    "artifacts": {
+      "bytes": 1454,
+      "path": "deploy-artifacts-original.json",
+      "sha256": "9914ca729439a313af83749685f44e4ea1fc227b51335a8a11af31e06d0db2f0"
+    },
+    "commit": {
+      "bytes": 2773,
+      "path": "deployed-commit-original.json",
+      "sha256": "6def883f2aeab7513d108c4ef53710f6f55cd6c136cc4f2ede31ca537ed0d28a"
+    },
+    "deployment": {
+      "bytes": 3856,
+      "path": "deployment-actual-original.json",
+      "sha256": "75ba0ad5549ebe3f44f5fcf9b3c97433d8bcbb150345894d6089f36fb86629be"
+    },
+    "main": {
+      "bytes": 358,
+      "path": "deployed-main-original.json",
+      "sha256": "67a43b5c586240ee74aa8a31a97310c9cec3dcac1f957875a598cf57574d9eca"
+    },
+    "receiptZIP": {
+      "bytes": 57748,
+      "path": "deploy-receipts-original.zip",
+      "sha256": "4a0ee90991d31a4c1bfd39062f66f01c10f04414fc028e1feda2b5b26213445e"
+    },
+    "run": {
+      "bytes": 13189,
+      "path": "deploy-run-original.json",
+      "sha256": "6974a648ac6b8aeb80da89c90ca1317c1d84a62cb62e60290b9403a226a3de06"
+    },
+    "statuses": {
+      "bytes": 6817,
+      "path": "deployment-statuses-original.json",
+      "sha256": "219e0ca240a81e36ddda68c61fed436b2b93f71fcbb271fadb1cb01c3d0f4257"
+    }
+  },
+  "receiptArtifactId": 10731605327,
+  "reviewed": true,
+  "runId": 35814917492,
+  "sourceCheckoutCommit": "9ada3176b5e892af72f61c14920f0612da8b1b72"
+}
